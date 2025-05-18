@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glasses Details - AR TryOn</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh;
+    }
+    .product-details-container {
+      max-width: 600px;
+      margin: 48px auto;
+      padding: 32px;
+      background: rgba(255,255,255,0.97);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+    .product-img {
+      width: 180px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      background: #f7f7f7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .product-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 8px;
+    }
+    .product-price {
+      color: #2f80ed;
+      font-size: 1.18rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .tryon-btn {
+      background: linear-gradient(90deg, #2f80ed 0%, #56ccf2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 15px 44px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(86,204,242,0.15);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 1px;
+    }
+    .tryon-btn:hover {
+      background: linear-gradient(90deg, #56ccf2 0%, #2f80ed 100%);
+      transform: scale(1.06);
+    }
+    .product-card {
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-bottom: 24px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+    }
+    .product-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="product-details-container" id="product-details"></div>
+  <div class="product-card" onclick="window.location.href='glass-product.html?id=1'">
+    <img src="assets/accessories/sun1.png" alt="Classic Aviator" />
+    <div class="product-name">Classic Aviator</div>
+    <div class="product-price">₹2,499</div>
+  </div>
+  <div class="product-card" onclick="window.location.href='glass-product.html?id=2'">
+    <img src="assets/accessories/sun2.png" alt="Wayfarer Black" />
+    <div class="product-name">Wayfarer Black</div>
+    <div class="product-price">₹1,999</div>
+  </div>
+  <div class="product-card" onclick="window.location.href='glass-product.html?id=3'">
+    <img src="assets/accessories/sun3.png" alt="Round Retro" />
+    <div class="product-name">Round Retro</div>
+    <div class="product-price">₹1,799</div>
+  </div>
+  <script>
+    // Dummy sunglasses data
+    const products = [
+      {
+        id: "1",
+        name: "Classic Aviator",
+        price: "₹2,499",
+        img: "assets/accessories/sun1.png"
+      },
+      {
+        id: "2",
+        name: "Wayfarer Black",
+        price: "₹1,999",
+        img: "assets/accessories/sun2.png"
+      },
+      {
+        id: "3",
+        name: "Round Retro",
+        price: "₹1,799",
+        img: "assets/accessories/sun3.png"
+      }
+    ];
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const product = products.find(p => p.id === id);
+
+    if (product) {
+      document.getElementById('product-details').innerHTML = `
+        <img class="product-img" src="${product.img}" alt="${product.name}" />
+        <div class="product-name">${product.name}</div>
+        <div class="product-price">${product.price}</div>
+        <button class="tryon-btn" onclick="window.location.href='index.html?glass_tryon=${product.id}&img_url=${encodeURIComponent(product.img)}'">Virtual Try On</button>
+      `;
+    } else {
+      document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;
+    }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    const glassTryonId = getQueryParam('glass_tryon');
+    const imgUrl = getQueryParam('img_url');
+    let glassImg = new Image();
+
+    if (imgUrl) {
+      glassImg.src = decodeURIComponent(imgUrl);
+    }
+
+    if (glassTryonId && imgUrl) {
+      window.addEventListener('DOMContentLoaded', async () => {
+        const controls = document.getElementById('controls');
+        if (controls) controls.style.display = 'none';
+        await loadModels();
+        await startCamera();
+      });
+    }
+
+    if (glassTryonId && imgUrl && glassImg.complete && glassImg.naturalWidth > 0) {
+      const leftEye = landmarks.getLeftEye();
+      const rightEye = landmarks.getRightEye();
+
+      const glassesWidth = rightEye[3].x - leftEye[0].x + 60;
+      const glassesHeight = glassesWidth / glassImg.width * glassImg.height;
+      const centerX = (leftEye[0].x + rightEye[3].x) / 2;
+      const centerY = (leftEye[0].y + rightEye[3].y) / 2;
+
+      ctx.drawImage(
+        glassImg,
+        centerX - glassesWidth / 2,
+        centerY - glassesHeight / 2 + 30, // move down by 30px
+        glassesWidth,
+        glassesHeight
+      );
+    }
+  </script>
+</body>
+</html>

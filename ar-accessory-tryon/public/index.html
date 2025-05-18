@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AR Accessory Try-On</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    #video, #overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 640px;
+      height: 480px;
+      transform: scaleX(-1); /* mirror */
+      display: none; /* Hide by default */
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay muted></video>
+  <canvas id="overlay"></canvas>
+
+  <div id="controls">
+    <button id="add-jewelry">Try on Jewelry</button>
+    <button id="add-sunglasses">Try on Sunglasses</button>
+    <button id="add-hat">Try on Hat</button>
+  </div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script defer src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Details - AR TryOn</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      min-height: 100vh;
+    }
+    .product-details-container {
+      max-width: 600px;
+      margin: 48px auto;
+      padding: 32px;
+      background: rgba(255,255,255,0.97);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+    .product-img {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      background: #f7f7f7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .product-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 8px;
+    }
+    .product-price {
+      color: #ff5e62;
+      font-size: 1.18rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .tryon-btn {
+      background: linear-gradient(90deg, #ff5e62 0%, #ff9966 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 15px 44px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,94,98,0.15);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 1px;
+    }
+    .tryon-btn:hover {
+      background: linear-gradient(90deg, #ff9966 0%, #ff5e62 100%);
+      transform: scale(1.06);
+    }
+  </style>
+</head>
+<body>
+  <div class="product-details-container" id="product-details">
+    <!-- Product details will be loaded here by JS -->
+  </div>
+  <script>
+    // Dummy product data (should match IDs from jewels.html)
+    const products = [
+      {
+        id: "1",
+        name: "Diamond Necklace",
+        price: "₹12,999",
+        img: "https://pngimg.com/d/necklace_PNG45.png"
+      },
+      {
+        id: "2",
+        name: "Gold Chain",
+        price: "₹7,499",
+        img: "https://pngimg.com/d/necklace_PNG51.png"
+      },
+      {
+        id: "3",
+        name: "Emerald Pendant",
+        price: "₹5,999",
+        img: "https://pngimg.com/d/necklace_PNG52.png"
+      }
+    ];
+    // Get product id from URL
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const product = products.find(p => p.id === id);
+
+    if (product) {
+      document.getElementById('product-details').innerHTML = `
+        <img class="product-img" src="${product.img}" alt="${product.name}" />
+        <div class="product-name">${product.name}</div>
+        <div class="product-price">${product.price}</div>
+        <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id}'">Virtual Try On</button>
+      `;
+    } else {
+      document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;
+    }
+  </script>
+</body>
+</html>
