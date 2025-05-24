@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - AR Accessory TryOn</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      background: rgba(255,255,255,0.97);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px rgba(255,94,98,0.18);
+      padding: 40px 32px 32px 32px;
+      max-width: 350px;
+      width: 95vw;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 1s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .login-title {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #ff5e62;
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .login-input {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #ffb199;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+      background: #fff;
+    }
+    .login-input:focus {
+      border: 1.5px solid #ff5e62;
+    }
+    .login-btn {
+      background: linear-gradient(90deg, #ff9966 0%, #ff5e62 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 13px 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,94,98,0.15);
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+      text-decoration: none;
+      letter-spacing: 1px;
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+    .login-btn.enabled {
+      opacity: 1;
+      cursor: pointer;
+    }
+    .login-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    .login-error {
+      color: #ff5e62;
+      font-size: 0.98rem;
+      margin-top: -10px;
+      margin-bottom: 6px;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-title">Login</div>
+    <form class="login-form" id="loginForm" autocomplete="off">
+      <input class="login-input" type="text" id="username" placeholder="Username" autocomplete="username" />
+      <input class="login-input" type="password" id="password" placeholder="Password" autocomplete="current-password" />
+      <div class="login-error" id="loginError"></div>
+      <button class="login-btn" id="loginBtn" type="submit" disabled>Login</button>
+    </form>
+  </div>
+  <script>
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+
+    function validateInputs() {
+      if (username.value.trim() && password.value.trim()) {
+        loginBtn.disabled = false;
+        loginBtn.classList.add('enabled');
+      } else {
+        loginBtn.disabled = true;
+        loginBtn.classList.remove('enabled');
+      }
+      loginError.textContent = '';
+    }
+
+    username.addEventListener('input', validateInputs);
+    password.addEventListener('input', validateInputs);
+
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!username.value.trim() || !password.value.trim()) {
+        loginError.textContent = "Please enter both username and password.";
+        return;
+      }
+      // You can add real authentication here.
+      // For now, just redirect to dashboard.html
+      window.location.href = "dashboard.html";
+    });
+  </script>
+</body>
+</html>

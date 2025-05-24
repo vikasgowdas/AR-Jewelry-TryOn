@@ -60,6 +60,27 @@
       background: linear-gradient(90deg, #ff9966 0%, #ff5e62 100%);
       transform: scale(1.06);
     }
+    .buy-btn {
+      background: linear-gradient(90deg, #b83280 0%, #f8bbd0 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 15px 44px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(184,50,128,0.15);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 1px;
+      margin-left: 16px;
+      margin-top: 12px;
+    }
+    .buy-btn:hover {
+      background: linear-gradient(90deg, #f8bbd0 0%, #b83280 100%);
+      transform: scale(1.06);
+    }
   </style>
 </head>
 <body>
@@ -79,13 +100,13 @@
         id: "2",
         name: "Gold Chain",
         price: "₹7,499",
-        img: "https://pngimg.com/d/necklace_PNG51.png"
+        img: "assets/accessories/j1.png"
       },
       {
         id: "3",
         name: "Emerald Pendant",
         price: "₹5,999",
-        img: "https://pngimg.com/d/necklace_PNG52.png"
+        img: "assets/accessories/j2.png"
       }
     ];
     // Get product id from URL
@@ -98,7 +119,8 @@
         <img class="product-img" src="${product.img}" alt="${product.name}" />
         <div class="product-name">${product.name}</div>
         <div class="product-price">${product.price}</div>
-        <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id}'">Virtual Try On</button>
+        <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id}&img=${encodeURIComponent(product.img)}'">Virtual Try On</button>
+        <button class="buy-btn" onclick="alert('Thank you for your interest in buying! (Demo)')">Buy Now</button>
       `;
     } else {
       document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;

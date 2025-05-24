@@ -34,9 +34,14 @@ function getQueryParam(name) {
   return params.get(name);
 }
 
-const tryonId = getQueryParam('tryon');
-if (tryonId && productImages[tryonId]) {
-  necklaceImg.src = productImages[tryonId];
+const params = new URLSearchParams(window.location.search);
+const tryonId = params.get('tryon');
+const imgPath = params.get('img');
+
+let overlayImg = new Image();
+if (imgPath) {
+  overlayImg.src = decodeURIComponent(imgPath);
+  // Use overlayImg in your AR overlay logic
 }
 
 let modelsLoaded = false;
@@ -77,39 +82,47 @@ async function detectLoop() {
   if (result && result.landmarks) {
     const landmarks = result.landmarks;
 
-    // For necklace (if needed)
-    if (tryonId && productImages[tryonId]) {
-      const chin = landmarks.getJawOutline()[8];
-      const leftJaw = landmarks.getJawOutline()[3];
-      const rightJaw = landmarks.getJawOutline()[13];
-      const necklaceWidth = rightJaw.x - leftJaw.x + 40;
-      const necklaceHeight = necklaceWidth / necklaceImg.width * necklaceImg.height;
-      ctx.drawImage(
-        necklaceImg,
-        chin.x - necklaceWidth / 2,
-        chin.y + 10,
-        necklaceWidth,
-        necklaceHeight
-      );
-    }
+    if (tryonId && overlayImg.src && overlayImg.complete && overlayImg.naturalWidth > 0) {
+      // Decide if this is glasses or necklace based on the image path or tryonId
+      if (imgPath && (imgPath.includes('sun') || imgPath.includes('glass'))) {
+        // Draw glasses using eye landmarks
+        const leftEye = landmarks.getLeftEye();
+        const rightEye = landmarks.getRightEye();
 
-    // For sunglasses
-    if (glassTryonId && glassImg.src && glassImg.complete && glassImg.naturalWidth > 0) {
-      const leftEye = landmarks.getLeftEye();
-      const rightEye = landmarks.getRightEye();
+        const leftCorner = leftEye[0];
+        const rightCorner = rightEye[3];
 
-      const glassesWidth = rightEye[3].x - leftEye[0].x + 60;
-      const glassesHeight = glassesWidth / glassImg.width * glassImg.height;
-      const centerX = (leftEye[0].x + rightEye[3].x) / 2;
-      const centerY = (leftEye[0].y + rightEye[3].y) / 2;
+        const centerX = (leftCorner.x + rightCorner.x) / 2;
+        const centerY = (leftCorner.y + rightCorner.y) / 2;
 
-      ctx.drawImage(
-        glassImg,
-        centerX - glassesWidth / 2,
-        centerY - glassesHeight / 2 + 9,
-        glassesWidth,
-        glassesHeight
-      );
+        const glassesWidth = (rightCorner.x - leftCorner.x) * 1.7;
+        const glassesHeight = glassesWidth / overlayImg.width * overlayImg.height;
+
+        // Move glasses lower by 12 pixels (adjust as needed)
+        const glassesYOffset = 12;
+
+        ctx.drawImage(
+          overlayImg,
+          centerX - glassesWidth / 2,
+          centerY - glassesHeight / 2 + glassesYOffset,
+          glassesWidth,
+          glassesHeight
+        );
+      } else {
+        // Draw necklace using jaw/chin landmarks
+        const chin = landmarks.getJawOutline()[8];
+        const leftJaw = landmarks.getJawOutline()[3];
+        const rightJaw = landmarks.getJawOutline()[13];
+        const necklaceWidth = rightJaw.x - leftJaw.x + 40;
+        const necklaceHeight = necklaceWidth / overlayImg.width * overlayImg.height;
+        ctx.drawImage(
+          overlayImg,
+          chin.x - necklaceWidth / 2,
+          chin.y + 10,
+          necklaceWidth,
+          necklaceHeight
+        );
+      }
     }
   }
 
@@ -117,7 +130,7 @@ async function detectLoop() {
 }
 
 // Auto-start for tryon (necklace or glasses)
-if ((tryonId && productImages[tryonId]) || (glassTryonId && glassImages[glassTryonId])) {
+if (tryonId && imgPath) {
   window.addEventListener('DOMContentLoaded', async () => {
     // Hide controls if present
     const controls = document.getElementById('controls');

@@ -78,6 +78,26 @@
       border-radius: 12px;
       margin-bottom: 12px;
     }
+    .buy-btn {
+      background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 15px 44px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(67,206,162,0.15);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 1px;
+      margin-left: 16px;
+    }
+    .buy-btn:hover {
+      background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+      transform: scale(1.06);
+    }
   </style>
 </head>
 <body>
@@ -128,7 +148,8 @@
         <img class="product-img" src="${product.img}" alt="${product.name}" />
         <div class="product-name">${product.name}</div>
         <div class="product-price">${product.price}</div>
-        <button class="tryon-btn" onclick="window.location.href='index.html?glass_tryon=${product.id}&img_url=${encodeURIComponent(product.img)}'">Virtual Try On</button>
+        <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id}&img=${encodeURIComponent(product.img)}'">Virtual Try On</button>
+        <button class="buy-btn" onclick="alert('Thank you for your interest in buying! (Demo)')">Buy Now</button>
       `;
     } else {
       document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;

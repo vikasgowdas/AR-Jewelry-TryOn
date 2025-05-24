@@ -21,7 +21,7 @@
       background: linear-gradient(90deg, #ff9966 0%, #ff5e62 100%);
       display: flex;
       align-items: center;
-      justify-content: center; /* Center all navbar content */
+      justify-content: flex-start; /* Align items to the left */
       padding: 0 32px;
       height: 64px;
       box-shadow: 0 2px 12px rgba(255,94,98,0.08);
@@ -32,33 +32,44 @@
     .navbar-logo {
       display: flex;
       align-items: center;
-      font-size: 1.5rem;
-      font-weight: 800;
+      font-size: 2rem;             /* Bigger logo text */
+      font-weight: 900;
       color: #fff;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-decoration: none;
-      margin-right: 40px; /* Add spacing between logo and links */
+      margin-right: 32px;
+      text-shadow: 0 2px 8px #ffb199, 0 1px 0 #fffbe6;
     }
     .navbar-logo img {
-      height: 36px;
+      height: 54px;
       margin-right: 12px;
     }
     .navbar-links {
       display: flex;
       gap: 24px;
+      flex: 1;
+      justify-content: center; /* Center the links */
     }
     .navbar-link {
-      color: #fff;
-      font-size: 1.08rem;
-      font-weight: 600;
+      color: #ff5e62;
+      font-size: 1.22rem;
+      font-weight: 700;
       text-decoration: none;
-      transition: color 0.18s;
-      padding: 6px 12px;
-      border-radius: 6px;
+      transition: color 0.18s, background 0.18s, box-shadow 0.18s;
+      padding: 10px 22px;
+      border-radius: 10px;
+      letter-spacing: 1.5px;
+      box-shadow: 0 2px 8px rgba(255,94,98,0.10);
+      background: #fff; /* Contrasting white background */
+      margin: 0 2px;
+      position: relative;
+      z-index: 1;
     }
     .navbar-link:hover, .navbar-link.active {
-      background: rgba(255,255,255,0.18);
-      color: #222;
+      background: #ff5e62;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(255,94,98,0.18);
+      text-shadow: 0 2px 8px #ffd6e0;
     }
     @media (max-width: 700px) {
       .navbar {
@@ -245,14 +256,14 @@
   <!-- Navbar Start -->
   <nav class="navbar">
     <a class="navbar-logo" href="dashboard.html">
-      <img src="https://cdn-icons-png.flaticon.com/512/3082/3082039.png" alt="Logo" />
+      <img src="assets/accessories/tryon.png" alt="Logo" />
       AR TryOn
     </a>
     <div class="navbar-links">
       <a class="navbar-link active" href="dashboard.html">Home</a>
       <a class="navbar-link" href="jewels.html">Jewels</a>
       <a class="navbar-link" href="glasses.html">Glasses</a>
-      <a class="navbar-link" href="index.html?category=watches">Watches</a>
+      
       <a class="navbar-link" href="index.html?category=more">More</a>
       <a class="navbar-link" href="index.html">Try Now</a>
     </div>
@@ -271,39 +282,17 @@
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHngC1fvGk69ZCCjxYWxHnSEEpgUXMiJg8B6YuNw8Pn77q-tZ7FD7y_asEulyLkG7ebYU&usqp=CAU" alt="Glasses" />
         <div class="menu-title">Glasses</div>
       </div>
-      <div class="menu-card" onclick="window.location.href='watches.html'">
+      <!-- <div class="menu-card" onclick="window.location.href='watches.html'">
         <img src="assets/accessories/watch1.png" alt="Watches" />
         <div class="menu-title">Watches</div>
-      </div>
-      <div class="menu-card" onclick="window.location.href='index.html?category=more'">
+      </div> -->
+      <!-- <div class="menu-card" onclick="window.location.href='index.html?category=more'">
         <img src="https://cdn-icons-png.flaticon.com/512/2917/2917997.png" alt="More" />
         <div class="menu-title">More</div>
-      </div>
+      </div> -->
     </div>
     <a class="try-btn" href="index.html">Try Now</a>
   </div>
-
-  <!-- Product Cards Section (Newly Added) -->
-  <div class="dashboard-container" style="margin-top: 24px;">
-    <h1>Featured Watches</h1>
-    <div class="subtitle">Explore our exclusive range of watches</div>
-    <div class="menu" style="justify-content: flex-start; flex-wrap: wrap;">
-      <div class="product-card" onclick="window.location.href='watch-product.html?id=1'">
-        <img src="assets/accessories/watch1.png" alt="Classic Leather Watch" />
-        <div class="product-name">Classic Leather Watch</div>
-        <div class="product-price">₹4,999</div>
-      </div>
-      <div class="product-card" onclick="window.location.href='watch-product.html?id=2'">
-        <img src="assets/accessories/watch2.png" alt="Modern Steel Watch" />
-        <div class="product-name">Modern Steel Watch</div>
-        <div class="product-price">₹6,499</div>
-      </div>
-      <div class="product-card" onclick="window.location.href='watch-product.html?id=3'">
-        <img src="assets/accessories/watch3.png" alt="Sporty Digital Watch" />
-        <div class="product-name">Sporty Digital Watch</div>
-        <div class="product-price">₹3,299</div>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
+
