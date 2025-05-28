@@ -97,38 +97,55 @@
       <div class="login-error" id="loginError"></div>
       <button class="login-btn" id="loginBtn" type="submit" disabled>Login</button>
     </form>
+    <div style="margin-top:18px;font-size:0.98rem;">
+      Not an admin? <a href="register.html" style="color:#ff5e62;text-decoration:underline;">Register</a><br>
+      <a href="admin-login.html" style="color:#43cea2;text-decoration:underline;">Admin Login</a>
+    </div>
   </div>
   <script>
-    const username = document.getElementById('username');
-    const password = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
+const username = document.getElementById('username');
+const password = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
 
-    function validateInputs() {
-      if (username.value.trim() && password.value.trim()) {
-        loginBtn.disabled = false;
-        loginBtn.classList.add('enabled');
-      } else {
-        loginBtn.disabled = true;
-        loginBtn.classList.remove('enabled');
-      }
-      loginError.textContent = '';
-    }
+function validateInputs() {
+  if (username.value.trim() && password.value.trim()) {
+    loginBtn.disabled = false;
+    loginBtn.classList.add('enabled');
+  } else {
+    loginBtn.disabled = true;
+    loginBtn.classList.remove('enabled');
+  }
+  loginError.textContent = '';
+}
 
-    username.addEventListener('input', validateInputs);
-    password.addEventListener('input', validateInputs);
+username.addEventListener('input', validateInputs);
+password.addEventListener('input', validateInputs);
 
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!username.value.trim() || !password.value.trim()) {
-        loginError.textContent = "Please enter both username and password.";
-        return;
-      }
-      // You can add real authentication here.
-      // For now, just redirect to dashboard.html
+loginForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  fetch('http://localhost:5000/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.token) {
+      localStorage.setItem('token', data.token);
       window.location.href = "dashboard.html";
-    });
-  </script>
+    } else {
+      loginError.textContent = data.error || "Login failed";
+    }
+  })
+  .catch(() => {
+    loginError.textContent = "Server error. Please try again.";
+  });
+});
+</script>
 </body>
 </html>

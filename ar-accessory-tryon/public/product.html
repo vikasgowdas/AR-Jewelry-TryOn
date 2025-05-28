@@ -84,47 +84,61 @@
   </style>
 </head>
 <body>
-  <div class="product-details-container" id="product-details">
-    <!-- Product details will be loaded here by JS -->
-  </div>
+  <div class="product-details-container" id="product-details"></div>
   <script>
-    // Dummy product data (should match IDs from jewels.html)
-    const products = [
-      {
-        id: "1",
-        name: "Diamond Necklace",
-        price: "₹12,999",
-        img: "https://pngimg.com/d/necklace_PNG45.png"
-      },
-      {
-        id: "2",
-        name: "Gold Chain",
-        price: "₹7,499",
-        img: "assets/accessories/j1.png"
-      },
-      {
-        id: "3",
-        name: "Emerald Pendant",
-        price: "₹5,999",
-        img: "assets/accessories/j2.png"
-      }
-    ];
-    // Get product id from URL
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    const product = products.find(p => p.id === id);
+const products = [
+  {
+    id: "1",
+    name: "Diamond Necklace",
+    price: "₹12,999",
+    img: "https://pngimg.com/d/necklace_PNG45.png"
+  },
+  {
+    id: "2",
+    name: "Gold Chain",
+    price: "₹7,499",
+    img: "assets/accessories/j1.png"
+  },
+  {
+    id: "3",
+    name: "Emerald Pendant",
+    price: "₹5,999",
+    img: "assets/accessories/j2.png"
+  }
+];
 
-    if (product) {
-      document.getElementById('product-details').innerHTML = `
-        <img class="product-img" src="${product.img}" alt="${product.name}" />
-        <div class="product-name">${product.name}</div>
-        <div class="product-price">${product.price}</div>
-        <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id}&img=${encodeURIComponent(product.img)}'">Virtual Try On</button>
-        <button class="buy-btn" onclick="alert('Thank you for your interest in buying! (Demo)')">Buy Now</button>
-      `;
-    } else {
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+let product = products.find(p => p.id === id);
+
+function renderProduct(product) {
+  document.getElementById('product-details').innerHTML = `
+    <img class="product-img" src="${product.img}" alt="${product.name}" />
+    <div class="product-name">${product.name}</div>
+    <div class="product-price">${product.price}</div>
+    <button class="tryon-btn" onclick="window.location.href='index.html?tryon=${product.id || product._id}&img=${encodeURIComponent(product.img)}'">Virtual Try On</button>
+    <button class="buy-btn" onclick="alert('Thank you for your interest in buying! (Demo)')">Buy Now</button>
+  `;
+}
+
+if (product) {
+  renderProduct(product);
+} else if (id) {
+  fetch('http://localhost:5000/api/accessories/' + id)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.name && data.img) {
+        renderProduct(data);
+      } else {
+        document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;
+      }
+    })
+    .catch(() => {
       document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;
-    }
-  </script>
+    });
+} else {
+  document.getElementById('product-details').innerHTML = `<p>Product not found.</p>`;
+}
+</script>
 </body>
 </html>

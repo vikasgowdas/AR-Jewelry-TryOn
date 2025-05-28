@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - AR TryOn</title>
+  <style>
+    body { font-family: Montserrat, sans-serif; background: #f8f8f8; padding: 40px; }
+    .admin-container { max-width: 700px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px #ffd20033; padding: 32px; }
+    h2 { color: #ff5e62; }
+    table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; }
+    th { background: #fffbe6; }
+    .delete-btn { background: #ff5e62; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+    .add-form { display: flex; gap: 10px; margin-top: 24px; }
+    .add-form input { padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    .add-form button { background: #43cea2; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h2>Accessory Admin Panel</h2>
+    <form class="add-form" id="addAccessoryForm">
+      <input type="text" id="accName" placeholder="Name" required>
+      <input type="text" id="accType" placeholder="Type (jewel/glasses)" required>
+      <input type="text" id="accPrice" placeholder="Price" required>
+      <input type="text" id="accImg" placeholder="Image Path (e.g. assets/accessories/j1.png)" required>
+      <button type="submit">Add</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th><th>Type</th><th>Price</th><th>Image</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="accessoryTable"></tbody>
+    </table>
+  </div>
+  <script>
+    if (!localStorage.getItem('adminToken')) {
+      window.location.href = "admin-login.html";
+    }
+    function loadAccessories() {
+      fetch('http://localhost:5000/api/accessories')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('accessoryTable').innerHTML = data.map(acc => `
+            <tr>
+              <td>${acc.name}</td>
+              <td>${acc.type}</td>
+              <td>${acc.price}</td>
+              <td><img src="${acc.img}" width="50"></td>
+              <td><button class="delete-btn" onclick="deleteAccessory('${acc._id}')">Delete</button></td>
+            </tr>
+          `).join('');
+        });
+    }
+    function deleteAccessory(id) {
+      fetch('http://localhost:5000/api/accessories/' + id, { method: 'DELETE' })
+        .then(() => loadAccessories());
+    }
+    document.getElementById('addAccessoryForm').onsubmit = function(e) {
+      e.preventDefault();
+      fetch('http://localhost:5000/api/accessories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: accName.value,
+          type: accType.value,
+          price: accPrice.value,
+          img: accImg.value
+        })
+      }).then(() => {
+        loadAccessories();
+        addAccessoryForm.reset();
+      });
+    };
+    loadAccessories();
+  </script>
+</body>
+</html>

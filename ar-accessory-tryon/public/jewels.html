@@ -110,8 +110,8 @@
 </head>
 <body>
   <div class="products-container">
-    <h2>Jewelry Collection</h2>
-    <div class="products-grid">
+    <h2>jewellery Collection</h2>
+    <div class="products-grid" id="jewelsGrid">
       <div class="product-card" onclick="window.location.href='product.html?id=1'">
         <img src="https://pngimg.com/d/necklace_PNG45.png" alt="Diamond Necklace" />
         <div class="product-name">Diamond Necklace</div>
@@ -129,5 +129,22 @@
       </div>
     </div>
   </div>
+  <script>
+  fetch('http://localhost:5000/api/accessories')
+    .then(res => res.json())
+    .then(data => {
+      // Only show products of type 'jewel'
+      const newProducts = data
+        .filter(acc => acc.type === 'jewel')
+        .map(acc => `
+          <div class="product-card" onclick="window.location.href='product.html?id=${acc._id}'">
+            <img src="${acc.img}" alt="${acc.name}" />
+            <div class="product-name">${acc.name}</div>
+            <div class="product-price">${acc.price}</div>
+          </div>
+        `).join('');
+      document.getElementById('jewelsGrid').innerHTML += newProducts;
+    });
+  </script>
 </body>
 </html>

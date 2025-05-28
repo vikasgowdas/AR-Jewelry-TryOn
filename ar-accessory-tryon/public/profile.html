@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile</title>
+  <style>
+    body { font-family: Montserrat, sans-serif; padding: 40px; }
+    #profile { background: #fffbe6; padding: 32px; border-radius: 16px; max-width: 400px; margin: 40px auto; box-shadow: 0 4px 24px #ffd20033; }
+    #profile img { border-radius: 50%; margin-bottom: 16px; }
+    #logout { margin-top: 18px; background: #ff5e62; color: #fff; border: none; border-radius: 8px; padding: 10px 24px; font-size: 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="profile">Loading...</div>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = "login.html";
+    } else {
+      fetch('http://localhost:5000/api/profile', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.username) {
+          document.getElementById('profile').innerHTML = `
+            <img src="${data.avatar || 'https://ui-avatars.com/api/?name=' + data.username}" width="100" />
+            <h2>${data.username}</h2>
+            <p><b>Email:</b> ${data.email || 'Not set'}</p>
+            <button id="logout">Logout</button>
+          `;
+          document.getElementById('logout').onclick = function() {
+            localStorage.removeItem('token');
+            window.location.href = "login.html";
+          }
+        } else {
+          document.getElementById('profile').innerHTML = "Failed to load profile.";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

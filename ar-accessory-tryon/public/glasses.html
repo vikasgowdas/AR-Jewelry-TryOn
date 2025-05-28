@@ -98,7 +98,7 @@
 <body>
   <div class="products-container">
     <h2>Sunglasses Collection</h2>
-    <div class="products-grid">
+    <div class="products-grid" id="glassesGrid">
       <div class="product-card" onclick="window.location.href='glass-product.html?id=1'">
         <img src="assets/accessories/sun1.png" alt="Classic Aviator" />
         <div class="product-name">Classic Aviator</div>
@@ -116,5 +116,22 @@
       </div>
     </div>
   </div>
+  <script>
+  fetch('http://localhost:5000/api/accessories')
+    .then(res => res.json())
+    .then(data => {
+      // Only show products of type 'glasses'
+      const newProducts = data
+        .filter(acc => acc.type === 'glasses')
+        .map(acc => `
+          <div class="product-card" onclick="window.location.href='glass-product.html?id=${acc._id}'">
+            <img src="${acc.img}" alt="${acc.name}" />
+            <div class="product-name">${acc.name}</div>
+            <div class="product-price">${acc.price}</div>
+          </div>
+        `).join('');
+      document.getElementById('glassesGrid').innerHTML += newProducts;
+    });
+  </script>
 </body>
 </html>

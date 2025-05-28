@@ -24,5 +24,8 @@
     "try-on"
   ],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "username": "vikas",
+  "password": "123",
+  "email": "test@example.com"
 }

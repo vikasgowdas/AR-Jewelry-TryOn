@@ -82,9 +82,13 @@ async function detectLoop() {
   if (result && result.landmarks) {
     const landmarks = result.landmarks;
 
+    const tryonType = params.get('type'); // Add this to get the type from URL
+
     if (tryonId && overlayImg.src && overlayImg.complete && overlayImg.naturalWidth > 0) {
-      // Decide if this is glasses or necklace based on the image path or tryonId
-      if (imgPath && (imgPath.includes('sun') || imgPath.includes('glass'))) {
+      if (
+        (imgPath && (imgPath.includes('sun') || imgPath.includes('glass'))) ||
+        tryonType === 'glasses'
+      ) {
         // Draw glasses using eye landmarks
         const leftEye = landmarks.getLeftEye();
         const rightEye = landmarks.getRightEye();
@@ -101,13 +105,61 @@ async function detectLoop() {
         // Move glasses lower by 12 pixels (adjust as needed)
         const glassesYOffset = 12;
 
+        // For glasses
+        const overlayCenterX = centerX + overlayTransform.x;
+        const overlayCenterY = centerY + glassesYOffset + overlayTransform.y;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.18)';
+        ctx.shadowBlur = 10;
+        ctx.globalAlpha = 0.93;
+        ctx.translate(overlayCenterX, overlayCenterY);
+        ctx.scale(overlayTransform.scale, overlayTransform.scale);
         ctx.drawImage(
           overlayImg,
-          centerX - glassesWidth / 2,
-          centerY - glassesHeight / 2 + glassesYOffset,
+          -glassesWidth / 2,
+          -glassesHeight / 2,
           glassesWidth,
           glassesHeight
         );
+        ctx.restore();
+      } else if (tryonType === 'earring' || (imgPath && imgPath.includes('earring'))) {
+        // Draw earrings using ear landmarks
+        const leftEar = landmarks.getLeftEye()[0];  // Approximate ear position
+        const rightEar = landmarks.getRightEye()[3]; // Approximate ear position
+
+        const earringWidth = 40 * overlayTransform.scale;
+        const earringHeight = 60 * overlayTransform.scale;
+
+        // Left earring
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.18)';
+        ctx.shadowBlur = 10;
+        ctx.globalAlpha = 0.93;
+        ctx.translate(leftEar.x + overlayTransform.x, leftEar.y + 30 + overlayTransform.y);
+        ctx.drawImage(
+          overlayImg,
+          -earringWidth / 2,
+          0,
+          earringWidth,
+          earringHeight
+        );
+        ctx.restore();
+
+        // Right earring
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.18)';
+        ctx.shadowBlur = 10;
+        ctx.globalAlpha = 0.93;
+        ctx.translate(rightEar.x + overlayTransform.x, rightEar.y + 30 + overlayTransform.y);
+        ctx.drawImage(
+          overlayImg,
+          -earringWidth / 2,
+          0,
+          earringWidth,
+          earringHeight
+        );
+        ctx.restore();
       } else {
         // Draw necklace using jaw/chin landmarks
         const chin = landmarks.getJawOutline()[8];
@@ -115,13 +167,25 @@ async function detectLoop() {
         const rightJaw = landmarks.getJawOutline()[13];
         const necklaceWidth = rightJaw.x - leftJaw.x + 40;
         const necklaceHeight = necklaceWidth / overlayImg.width * overlayImg.height;
+
+        // For necklace
+        const necklaceCenterX = chin.x + overlayTransform.x;
+        const necklaceCenterY = chin.y + 10 + overlayTransform.y;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.18)';
+        ctx.shadowBlur = 10;
+        ctx.globalAlpha = 0.93;
+        ctx.translate(necklaceCenterX, necklaceCenterY);
+        ctx.scale(overlayTransform.scale, overlayTransform.scale);
         ctx.drawImage(
           overlayImg,
-          chin.x - necklaceWidth / 2,
-          chin.y + 10,
+          -necklaceWidth / 2,
+          0,
           necklaceWidth,
           necklaceHeight
         );
+        ctx.restore();
       }
     }
   }
@@ -140,3 +204,42 @@ if (tryonId && imgPath) {
     await startCamera();
   });
 }
+
+let overlayTransform = {
+  x: 0, y: 0, scale: 1, dragging: false, dragStart: {x:0, y:0}
+};
+
+canvas.addEventListener('mousedown', e => {
+  overlayTransform.dragging = true;
+  overlayTransform.dragStart = { x: e.offsetX - overlayTransform.x, y: e.offsetY - overlayTransform.y };
+});
+canvas.addEventListener('mousemove', e => {
+  if (overlayTransform.dragging) {
+    overlayTransform.x = e.offsetX - overlayTransform.dragStart.x;
+    overlayTransform.y = e.offsetY - overlayTransform.dragStart.y;
+  }
+});
+canvas.addEventListener('mouseup', () => overlayTransform.dragging = false);
+canvas.addEventListener('mouseleave', () => overlayTransform.dragging = false);
+
+// Touch support
+canvas.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  overlayTransform.dragging = true;
+  overlayTransform.dragStart = { x: t.clientX - overlayTransform.x, y: t.clientY - overlayTransform.y };
+});
+canvas.addEventListener('touchmove', e => {
+  if (overlayTransform.dragging) {
+    const t = e.touches[0];
+    overlayTransform.x = t.clientX - overlayTransform.dragStart.x;
+    overlayTransform.y = t.clientY - overlayTransform.dragStart.y;
+  }
+});
+canvas.addEventListener('touchend', () => overlayTransform.dragging = false);
+
+// Mouse wheel for scale
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  overlayTransform.scale += e.deltaY < 0 ? 0.05 : -0.05;
+  overlayTransform.scale = Math.max(0.2, Math.min(overlayTransform.scale, 3));
+});

@@ -1,0 +1,53 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Earrings - AR TryOn</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background: #f8e1f4; margin: 0; }
+    .products-container { max-width: 1200px; margin: 48px auto; padding: 40px 24px; background: rgba(255,255,255,0.45); border-radius: 24px; }
+    .products-grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+    .product-card { background: #fff; border-radius: 18px; box-shadow: 0 4px 16px rgba(67,206,162,0.10); padding: 18px 16px; width: 180px; display: flex; flex-direction: column; align-items: center; transition: transform 0.18s, box-shadow 0.18s; cursor: pointer; }
+    .product-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 32px rgba(67,206,162,0.18); }
+    .product-card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 12px; border-radius: 12px; background: #f7f7f7; }
+    .product-name { font-size: 1rem; font-weight: 600; color: #222; margin-bottom: 4px; text-align: center; }
+    .product-price { font-size: 0.9rem; font-weight: 500; color: #ff5e62; margin-top: 0; text-align: center; }
+  <!-- </style> -->
+</head>
+<body>
+  <!-- <div class="products-container"> -->
+    <h2>Earrings</h2>
+    <div class="products-grid" id="earringsGrid">
+      <!-- Hardcoded earrings -->
+      <div class="product-card" onclick="window.location.href='earring-product.html?id=1'">
+        <img src="https://www.pngall.com/wp-content/uploads/5/Diamond-Earring-PNG-Image.png" alt="Diamond Stud" />
+        <div class="product-name">Diamond Stud</div>
+        <div class="product-price">₹2,199</div>
+      </div>
+      <div class="product-card" onclick="window.location.href='earring-product.html?id=2'">
+        <!-- <img src="https://www.pngall.com/wp-content/uploads/5/Gold-Earring-PNG-Image.png" alt="Gold Hoop" /> -->
+        <div class="product-name">Gold Hoop</div>
+        <div class="product-price">₹1,499</div>
+      </div>
+      <!-- Admin-added earrings will be appended here -->
+    </div>
+  </div>
+  <script>
+    fetch('http://localhost:5000/api/accessories')
+      .then(res => res.json())
+      .then(data => {
+        const newProducts = data
+          .filter(acc => acc.type === 'earring')
+          .map(acc => `
+            <div class="product-card" onclick="window.location.href='earring-product.html?id=${acc._id}'">
+              <img src="${acc.img}" alt="${acc.name}" />
+              <div class="product-name">${acc.name}</div>
+              <div class="product-price">${acc.price}</div>
+            </div>
+          `).join('');
+        document.getElementById('earringsGrid').innerHTML += newProducts;
+      });
+  </script>
+</body>
+</html> -->
